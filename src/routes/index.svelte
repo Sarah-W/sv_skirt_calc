@@ -522,21 +522,24 @@
 		fabricWidth: 112
 	};
 
+  // need to regenerate skirt on change of input. may also need to do some sanity-isation
+
   let layoutWidth
   let offset = 40
-  $: width = layoutWidth - 2*offset
-
   let xscale = scaleLinear()
-  
-  $:xscale = xscale.domain([0,width/3]).range([0,width])
-
-  $: height = xscale(skirt.fabricWidth+20) 
-  $: layoutHeight = height + 2*offset
   let yscale = scaleLinear()
 
-  $:console.log({layoutWidth,scale: xscale})
- 
-  $:yscale = yscale.domain([0,height/3]).range([0,height])
+// have to do the gridlines by hand, only using the yscale for nice ticks and that's really not a good enough reason  
+
+  $: width = layoutWidth - 2*offset 
+  $: xscale = xscale.domain([0,width/3]).range([0,width])
+  $: height = xscale(skirt.fabricWidth+20) 
+  $: layoutHeight = height + 2*offset
+  $: yscale = yscale.domain([0,height/3]).range([0,height])
+
+
+  
+  // $:console.log({layoutWidth,scale: xscale})
   // let xgridlines = axisBottom(xscale)
   // let ygridlines = axisRight(xscale)
   // let xg
@@ -614,11 +617,24 @@
       <g class=fabric transform={`translate(${offset},${offset})`}>
         <rect height ={yscale(skirt.fabricWidth)} width = {width-50 } ></rect>
       </g>
+      <g class = pieces transform={`translate(${offset},${yscale(skirt.fabricWidth)+offset})`}>
+        {#each skirt.type.layoutGenerator(skirt) as piece}
+        <g transform={`translate(${piece.x},${-1*piece.y})`}>
+          {console.log(piece)}
+          <path class=main d={piece.path()}/>
+          {#each piece.csa() as csa}
+            <path class=csa d={csa.path}/>
+          {/each}
+          {#each piece.ssa() as {height,width,transform}}
+            <rect class=csa {height} {width} {transform}/>
+          {/each}
+        </g>
+        {/each} 
+      </g>
 
     </svg>
   </div>
 </div>
-
 
 <style lang=scss>
 	.container {
@@ -657,6 +673,11 @@
       fill:grey;
       fill-opacity: 0.5;
     }
+  }
+  .main{
+    stroke:none;
+      fill:hotpink;
+      fill-opacity: 0.5;
   }
 
 
