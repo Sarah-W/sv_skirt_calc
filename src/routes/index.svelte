@@ -97,6 +97,8 @@
 		centroid,
 		csa,
 		ssa,
+		x: 0,
+		y: 0,
 		dx: 0,
 		dy: 0,
 		pieceRotaton: 0
@@ -522,6 +524,28 @@
 		fabricWidth: 112
 	};
 
+	const piece_rotate = (piece)=>{
+		const oldCentroid = piece.centroid()
+		piece.pieceRotaton = piece.pieceRotaton + Math.PI/4
+		const newCentroid = piece.centroid()
+		const dx=oldCentroid[0]-newCentroid[0]
+		const dy=oldCentroid[1]-newCentroid[1]
+		piece.dx=piece.dx+dx
+		piece.dy=piece.dy-dy
+		piece.transform=piece_transform(piece)
+		piece = piece
+		console.log("rotating" , piece)
+		return piece
+	}
+
+	const piece_drag = (piece)=>{
+
+	}
+
+	const piece_transform = (piece) => {
+		return `translate(${piece.x + piece.dx},${-1*piece.y+piece.dy}) rotate(${piece.pieceRotaton})`
+	}
+	
   // need to regenerate skirt on change of input. may also need to do some sanity-isation
 
   let layoutWidth
@@ -538,6 +562,12 @@
   $: yscale = yscale.domain([0,height/3]).range([0,height])
 
 
+	const get_pieces = (skirt)=>{
+		let pieces = skirt.type.layoutGenerator(skirt)
+		pieces.forEach((piece)=>{piece.transform=piece_transform(piece)})
+		// console.log(pieces)
+		return pieces
+	}
   
   // $:console.log({layoutWidth,scale: xscale})
   // let xgridlines = axisBottom(xscale)
@@ -617,13 +647,12 @@
       <g class=fabric transform={`translate(${offset},${offset})`}>
         <rect height ={yscale(skirt.fabricWidth)} width = {width-50 } ></rect>
       </g>
-      <g class = pieces transform={`translate(${offset},${yscale(skirt.fabricWidth)+offset})`}>
-        {#each skirt.type.layoutGenerator(skirt) as piece}
-        <g transform={`translate(${piece.x},${-1*piece.y})`}>
-          {console.log(piece)}
+      <g class = pieces  transform={`translate(${offset},${yscale(skirt.fabricWidth)+offset})`}>
+        {#each get_pieces(skirt) as piece}
+        <g on:click={()=>piece = piece_rotate(piece)} transform={piece.transform}>
           <path class=main d={piece.path()}/>
           {#each piece.csa() as csa}
-            <path class=csa d={csa.path}/>
+            <path class=csa d={csa.path} />
           {/each}
           {#each piece.ssa() as {height,width,transform}}
             <rect class=csa {height} {width} {transform}/>
