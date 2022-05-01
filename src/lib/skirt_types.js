@@ -1,93 +1,10 @@
-	import { arc } from 'd3-shape';
-
-	const _arc = function () {
-		return arc()({
-			innerRadius: this.innerRadius,
-			outerRadius: this.outerRadius,
-			startAngle: this.startAngle + this.pieceRotaton,
-			endAngle: this.endAngle + this.pieceRotaton
-		});
-	};
-	const centroid = function () {
-		return arc().centroid({
-			innerRadius: this.innerRadius,
-			outerRadius: this.outerRadius,
-			startAngle: this.startAngle + this.pieceRotaton,
-			endAngle: this.endAngle + this.pieceRotaton
-		});
-	};
-
-	let csa = function () {
-		//curved seam/hem allowances (top and bottom)
-		let waist = arc()({
-			innerRadius: this.innerRadius - this.seamAllowance,
-			outerRadius: this.innerRadius,
-			startAngle: this.startAngle + this.pieceRotaton,
-			endAngle: this.endAngle + this.pieceRotaton
-		});
-		let hem = arc()({
-			innerRadius: this.outerRadius,
-			outerRadius: this.outerRadius + this.hemAllowance,
-			startAngle: this.startAngle + this.pieceRotaton,
-			endAngle: this.endAngle + this.pieceRotaton
-		});
-
-		return [
-			{ name: 'waist', path: waist },
-			{ name: 'hem', path: hem }
-		];
-	};
-	let ssa = function () {
-		//straight seam allowances (sides)
-		let height = this.seamAllowance + this.hemAllowance + this.outerRadius - this.innerRadius;
-		let width = this.seamAllowance;
-
-		let x1 =
-			(this.innerRadius - this.seamAllowance) * Math.sin(this.startAngle + this.pieceRotaton);
-		let y1 =
-			(this.innerRadius - this.seamAllowance) * -1 * Math.cos(this.startAngle + this.pieceRotaton);
-
-		let transform1 =
-			'translate(' +
-			x1 +
-			',' +
-			y1 +
-			') rotate(' +
-			(180 * (this.startAngle + this.pieceRotaton - Math.PI)) / Math.PI +
-			')';
-
-		let x2 =
-			(this.innerRadius - this.seamAllowance) * Math.sin(this.endAngle + this.pieceRotaton) +
-			this.seamAllowance * Math.cos(this.endAngle + this.pieceRotaton);
-		let y2 =
-			(this.innerRadius - this.seamAllowance) * -1 * Math.cos(this.endAngle + this.pieceRotaton) +
-			this.seamAllowance * Math.sin(this.endAngle + this.pieceRotaton);
-
-		let transform2 =
-			'translate(' +
-			x2 +
-			',' +
-			y2 +
-			') rotate(' +
-			(180 * (this.endAngle + this.pieceRotaton - Math.PI)) / Math.PI +
-			')';
-
-		return [
-			{ name: 'start', height: height, width: width, transform: transform1 },
-			{ name: 'end', height: height, width: width, transform: transform2 }
-		];
-	};
 
 	let basePiece = {
-		path: _arc,
-		centroid,
-		csa,
-		ssa,
 		x: 0,
 		y: 0,
 		dx: 0,
 		dy: 0,
-		pieceRotaton: 0
+		pieceRotaton: 0,
 	};
 
 	export let types = [
