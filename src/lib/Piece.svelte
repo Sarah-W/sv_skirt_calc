@@ -13,7 +13,7 @@ export let innerRadius = 0
 export let outerRadius = 0
 export let transform=""
 
-$:console.log({innerRadius,outerRadius})
+// $:console.log({innerRadius,outerRadius})
 
 
 let path = arc()(
@@ -25,7 +25,7 @@ let path = arc()(
   }
 );
 
-console.log({path})
+// console.log({path})
 
 // const centroid =  arc().centroid()({
 //     innerRadius,

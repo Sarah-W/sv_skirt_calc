@@ -7,10 +7,22 @@
 		pieceRotaton: 0,
 	};
 
+	const validSkirt = (skirt)=>{
+		const  { type, waistMeasurement , skirtLength, seamAllowance, hemAllowance, fabricWidth } = skirt
+		if (type < 0 || type > types.length-1) return false
+		if (waistMeasurement < 1) return false
+		if (skirtLength < 1) return false
+		if (seamAllowance < 0.01) return false
+		if (hemAllowance < 0.01) return false
+		if (fabricWidth < 1) return false
+		return true
+	}
+
 	export let types = [
 		{
 			name: 'Half circle',
 			layoutGenerator: function (skirt, xscale) {
+				if (!validSkirt(skirt)) return []
 				const r = skirt.waistMeasurement / Math.PI;
 				const R = skirt.skirtLength + r;
 				skirt.r = r;
@@ -72,6 +84,7 @@
 			name: 'Full circle with centre back seam',
 
 			layoutGenerator: function (skirt, xscale) {
+				if (!validSkirt(skirt)) return []
 				const r = skirt.waistMeasurement / (2 * Math.PI);
 				const R = skirt.skirtLength + r;
 				skirt.r = r;
@@ -101,7 +114,7 @@
 							innerRadius: xscale(r),
 							outerRadius: xscale(R),
 							startAngle: 0,
-							endAngle: Math.PI / 2,
+							endAngle: Math.PI/2 ,
 							x: xscale(skirt.seamAllowance),
 							y: xscale(skirt.seamAllowance)
 						},
@@ -153,6 +166,7 @@
 		{
 			name: 'Full circle without centre back seam',
 			layoutGenerator: function (skirt, xscale) {
+				if (!validSkirt(skirt)) return []
 				const r = skirt.waistMeasurement / (2 * Math.PI);
 				const R = skirt.skirtLength + r;
 				skirt.r = r;
@@ -212,6 +226,7 @@
 		{
 			name: 'Three Quarter circle, straight sides together',
 			layoutGenerator: function (skirt, xscale) {
+				if (!validSkirt(skirt)) return []
 				const r = (2 * skirt.waistMeasurement) / (3 * Math.PI);
 				const R = skirt.skirtLength + r;
 
@@ -283,6 +298,7 @@
 			name: 'Three Quarter circle layout on selvedge, curved sides together',
 
 			layoutGenerator: function (skirt, xscale) {
+				if (!validSkirt(skirt)) return []
 				const r = (2 * skirt.waistMeasurement) / (3 * Math.PI);
 				const R = skirt.skirtLength + r;
 
@@ -352,6 +368,7 @@
 			name: 'Three Quarter circle, layout on cross grain',
 
 			layoutGenerator: function (skirt, xscale) {
+				if (!validSkirt(skirt)) return []
 				const r = (2 * skirt.waistMeasurement) / (3 * Math.PI);
 				const R = skirt.skirtLength + r;
 
