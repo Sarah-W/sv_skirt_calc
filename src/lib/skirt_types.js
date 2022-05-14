@@ -19,6 +19,30 @@
 	}
 
 	export let types = [
+
+		{
+			name:"test piece",
+			layoutGenerator: function (skirt, xscale) {
+				if (!validSkirt(skirt)) return []
+				const r = skirt.waistMeasurement / Math.PI;
+				const R = skirt.skirtLength + r;
+				skirt.r = r;
+				skirt.R = R;
+					return [
+						{
+							...basePiece,
+							seamAllowance: xscale(skirt.seamAllowance),
+							hemAllowance: xscale(skirt.hemAllowance),
+							innerRadius: xscale(r),
+							outerRadius: xscale(R),
+							endAngle: Math.PI/2,
+							startAngle: 0,
+							x: xscale(skirt.fabricWidth/4),
+							y: xscale(skirt.fabricWidth/4)
+						}
+					];
+			}
+		},
 		{
 			name: 'Half circle',
 			layoutGenerator: function (skirt, xscale) {
