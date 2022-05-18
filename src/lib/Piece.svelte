@@ -1,37 +1,34 @@
 <script>
-import { arc } from 'd3-shape';
-export let x =0
-export let y =0
-export let dx =0
-export let dy =0
-export let pieceRotaton = 0
-export let seamAllowance = 0
-export let hemAllowance = 0
-export let startAngle = 0 
-export let endAngle = 0
-export let innerRadius = 0
-export let outerRadius = 0
-export let transform=""
+  import { createEventDispatcher,onMount } from 'svelte';
+  import { arc } from 'd3-shape';
+  export let x =0
+  export let y =0
+  export let dx =0
+  export let dy =0
+  export let pieceRotation = 0
+  export let seamAllowance = 0
+  export let hemAllowance = 0
+  export let startAngle = 0 
+  export let endAngle = 0
+  export let innerRadius = 0
+  export let outerRadius = 0
 
-// $:console.log({innerRadius,outerRadius})
-
+const dispatch = createEventDispatcher();
 
 let path = (pieceRotation)=>arc()(
   {
     innerRadius,
     outerRadius,
-    startAngle: startAngle + pieceRotaton,
-    endAngle: endAngle + pieceRotaton
+    startAngle: startAngle + pieceRotation,
+    endAngle: endAngle + pieceRotation
   }
 );
-
-// console.log({path})
 
 const centroid =  () => arc().centroid({
     innerRadius,
     outerRadius,
-    startAngle: startAngle + pieceRotaton,
-    endAngle: endAngle + pieceRotaton
+    startAngle: startAngle + pieceRotation,
+    endAngle: endAngle + pieceRotation
   });
 
 
@@ -40,14 +37,14 @@ let csa = function (pieceRotation) {
   let waist = arc()({
     innerRadius: innerRadius - seamAllowance,
     outerRadius: innerRadius,
-    startAngle: startAngle + pieceRotaton,
-    endAngle: endAngle + pieceRotaton
+    startAngle: startAngle + pieceRotation,
+    endAngle: endAngle + pieceRotation
   });
   let hem = arc()({
     innerRadius: outerRadius,
     outerRadius: outerRadius + hemAllowance,
-    startAngle: startAngle + pieceRotaton,
-    endAngle: endAngle + pieceRotaton
+    startAngle: startAngle + pieceRotation,
+    endAngle: endAngle + pieceRotation
   });
 
   return [
@@ -61,9 +58,9 @@ let ssa = function (pieceRotation) {
   let width = seamAllowance;
 
   let x1 =
-    (innerRadius - seamAllowance) * Math.sin(startAngle + pieceRotaton);
+    (innerRadius - seamAllowance) * Math.sin(startAngle + pieceRotation);
   let y1 =
-    (innerRadius - seamAllowance) * -1 * Math.cos(startAngle + pieceRotaton);
+    (innerRadius - seamAllowance) * -1 * Math.cos(startAngle + pieceRotation);
 
   let transform1 =
     'translate(' +
@@ -71,15 +68,15 @@ let ssa = function (pieceRotation) {
     ',' +
     y1 +
     ') rotate(' +
-    (180 * (startAngle + pieceRotaton - Math.PI)) / Math.PI +
+    (180 * (startAngle + pieceRotation - Math.PI)) / Math.PI +
     ')';
 
   let x2 =
-    (innerRadius - seamAllowance) * Math.sin(endAngle + pieceRotaton) +
-    seamAllowance * Math.cos(endAngle + pieceRotaton);
+    (innerRadius - seamAllowance) * Math.sin(endAngle + pieceRotation) +
+    seamAllowance * Math.cos(endAngle + pieceRotation);
   let y2 =
-    (innerRadius - seamAllowance) * -1 * Math.cos(endAngle + pieceRotaton) +
-    seamAllowance * Math.sin(endAngle + pieceRotaton);
+    (innerRadius - seamAllowance) * -1 * Math.cos(endAngle + pieceRotation) +
+    seamAllowance * Math.sin(endAngle + pieceRotation);
 
   let transform2 =
     'translate(' +
@@ -87,7 +84,7 @@ let ssa = function (pieceRotation) {
     ',' +
     y2 +
     ') rotate(' +
-    (180 * (endAngle + pieceRotaton - Math.PI)) / Math.PI +
+    (180 * (endAngle + pieceRotation - Math.PI)) / Math.PI +
     ')';
 
   return [
@@ -101,22 +98,25 @@ let newCentroid =[0,0]
 
 let mouseHasMoved = false
 
-const piece_rotate = ()=>{
+const piece_rotate = async()=>{
     if(!mouseHasMoved){
       oldCentroid = centroid()
-      pieceRotaton = pieceRotaton + Math.PI/4
+      pieceRotation = pieceRotation + Math.PI/4
       newCentroid = centroid()
       const _dx=oldCentroid[0]-newCentroid[0]
       const _dy=oldCentroid[1]-newCentroid[1]
       dx=dx+_dx
-      dy=dy+_dy
+      dy=dy+_dy 
+      dispatch("change",{})
     }
     mouseHasMoved = false
+    
 	}
 
   let dragging = false
 
   const dragstart = ()=>{
+    mouseHasMoved=false
     dragging = true
   }
   const dragend = ()=>{
@@ -128,6 +128,7 @@ const piece_rotate = ()=>{
       mouseHasMoved = true
       dx=dx+e.movementX
 		  dy=dy+e.movementY
+      dispatch("change",{})
     }
 	}
 
@@ -135,22 +136,25 @@ const piece_rotate = ()=>{
     return `translate(${x+dx},${(-1*y)+dy})`
 	}
 
-  // $: transform = piece_transform(x,dx,y,dy) 
+  onMount(()=>{
+    dispatch("change",{})
+  })
   
 </script>
 
 <g transform ={piece_transform(x,dx,y,dy)}>
   <path class=main 
-    d={path(pieceRotaton)} 
+    d={path(pieceRotation)} 
     on:mousedown={dragstart} 
     on:mouseup={dragend}
+    on:mouseleave={dragend}
     on:mousemove={drag}  
     on:click={piece_rotate}
     />
-  {#each csa(pieceRotaton) as csa}
+  {#each csa(pieceRotation) as csa}
     <path class=csa d={csa.path} />
   {/each}
-  {#each ssa(pieceRotaton) as {height,width,transform}}
+  {#each ssa(pieceRotation) as {height,width,transform}}
     <rect class=ssa {height} {width} {transform}/>
   {/each}
 </g>
