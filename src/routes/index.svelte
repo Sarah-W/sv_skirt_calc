@@ -85,73 +85,89 @@
 
 	<div class="setup">
 		<div>
-			<div>
-				<label for="waist">Waist: </label>
-				<input
-					type="number"
-					id="waist"
-					on:blur={recalc}
-					on:keypress={enter}
-					bind:value={_skirt.waistMeasurement}
-					label="Waist"
-				/>
-			</div>
-			<div>
-				<label for="length">Length: </label>
-				<input
-					type="number"
-					id="length"
-					on:blur={recalc}
-					on:keypress={enter}
-					bind:value={_skirt.skirtLength}
-				/>
-			</div>
-			<div>
-				<label for="seam_allowance">Seam Allowance: </label>
-				<input
-					type="number"
-					id="seam_allowance"
-					on:blur={recalc}
-					on:keypress={enter}
-					bind:value={_skirt.seamAllowance}
-				/>
-			</div>
-			<div>
-				<label for="hem_allowance">Hem Allowance: </label>
-				<input
-					type="number"
-					id="hem_allowance"
-					on:blur={recalc}
-					on:keypress={enter}
-					bind:value={_skirt.hemAllowance}
-				/>
-			</div>
-			<div>
-				<label for="fabricwidth">Fabric Width: </label>
-				<input
-					type="number"
-					id="fabricwidth"
-					on:blur={recalc}
-					on:keypress={enter}
-					bind:value={_skirt.fabricWidth}
-				/>
-			</div>
+      
+      <fieldset class = radio_wrap>
+        <legend>Set pattern measurements </legend>
+        <div class = number_input>
+          <label for="waist">Waist measurement in cm: </label>
+          <input
+            type="number"
+            id="waist"
+
+            on:blur={recalc}
+            on:keypress={enter}
+            bind:value={_skirt.waistMeasurement}
+            label="Waist"
+          />
+        </div>
+        <div class = number_input>
+          <label for="length">Length of skirt in cm: </label>
+          <input
+            type="number"
+            id="length"
+            on:blur={recalc}
+            on:keypress={enter}
+            bind:value={_skirt.skirtLength}
+          />
+        </div>
+        <div class = number_input>
+          <label for="seam_allowance">Seam allowance in cm: </label>
+          <input
+            type="number"
+            id="seam_allowance"
+            step=0.5
+            on:blur={recalc}
+            on:keypress={enter}
+            bind:value={_skirt.seamAllowance}
+          />
+        </div>
+        <div class = number_input>
+          <label for="hem_allowance">Hem allowance in cm: </label>
+          <input
+            type="number"
+            id="hem_allowance"
+            step=0.5
+            on:blur={recalc}
+            on:keypress={enter}
+            bind:value={_skirt.hemAllowance}
+          />
+        </div>
+        <div class = number_input>
+          <label for="fabricwidth">Fabric width in cm: </label>
+          <input
+            type="number"
+            id="fabricwidth"
+            on:blur={recalc}
+            on:keypress={enter}
+            bind:value={_skirt.fabricWidth}
+          />
+        </div>
+      </fieldset>
 		</div>
+    <div>
+      <fieldset class = radio_wrap>
+        <legend>Choose a layout</legend> 
+        {#each types as type, n}
+        <div class = "radio_input">
+          <input type="radio" id={"_"+n} bind:group={_skirt.type} on:change={newlayout} value={n} />
+          <label for ={"_"+n}>	{type.name} </label>
+        </div>
+        {/each}
+      </fieldset>
+    </div>
 		<div>
-			{#each types as type, n}
-				<label>
-					<input type="radio" bind:group={_skirt.type} on:change={newlayout} value={n} />
-					{type.name}
-				</label>
-			{/each}
-		</div>
-		<div>
-			<h1>Your skirt</h1>
-			<h2>You need at least {result.fabric} cm of fabric.</h2>
-			<p>
-				Your pieces have an inner radius of {result.innerRadius} cm and an outer radius of {result.outerRadius}
-				cm, including hem and seam allowances.
-			</p>
+      <fieldset class = radio_wrap>
+        <legend>Your skirt</legend>
+        <h2>You need at least {result.fabric} cm of fabric.</h2>
+        <p>
+          Your pieces have an inner radius of {result.innerRadius} cm and an outer radius of {result.outerRadius}
+          cm, including hem and seam allowances.
+        </p>
+        <div>
+          <button>Save this skirt</button>
+          <!-- <input type=select/> -->
+        </div>
+      </fieldset>
 		</div>
 	</div>
 	<div class="layout" bind:clientWidth={layoutWidth}>
@@ -161,7 +177,7 @@
 					<g transform={`translate(${scale(tickValue)},0)`}>
 						<line y1={-10} y2={height} stroke="black" />
 						<text class="tickvalue" text-anchor="middle" dy=".71em" y={height + offset / 2}>
-							{tickValue}
+							{tickValue} cm
 						</text>
 					</g>
 				{/each}
@@ -171,7 +187,7 @@
 					<g transform={`translate(0,${scale(tickValue)})`}>
 						<line x1={-10} x2={width - offset} stroke="black" />
 						<text text-anchor="start" x={width - offset / 2}>
-							{tickValue}
+							{tickValue} cm
 						</text>
 					</g>
 				{/each}
@@ -221,18 +237,49 @@
 		flex-direction: row;
 		justify-content: flex-start;
 		border: solid thin grey;
-		div {
+    div{
       display: flex;
       flex-direction: column;
-      
 			margin: 5px;
-      div{
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
+    }
+    fieldset{
+      border-radius:4px;
+      border-color: #ccc;
+      border-width: thin;
+      border-style: solid;
+      margin:5px; 
+    }
+		.radio_input{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      input{
+        margin:5px;
       }
+    }
+
+    .number_input{
+      display: flex;
+      flex-direction: column;
+			margin: 5px;
+      input{
+        font-size: large;
+        margin-left: 30px;
+        width:60%;
+        color:darkslategrey;
+        border-radius:4px;
+        border-color: #ccc;
+        border-width: thin;
+        border-style: solid;
+        padding:3px;
+      }
+      label{
+        margin-bottom: 3px;
+        font-size: small;
+      }
+    }  
 		}
-	}
+	
 
 	.layout {
 		min-height: 50px;
