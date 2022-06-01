@@ -6,6 +6,7 @@
 	import { types } from '$lib/skirt_types';
 	import Piece from '$lib/Piece.svelte';
 	import { newSkirt } from '$lib/skirtStore';
+	import {user,saveSkirt,skirtlist} from '$lib/firebase.js'
 
 	let _skirt = {
 		type: 0,
@@ -75,13 +76,36 @@
 		result.outerRadius = Math.round($pieces[0].outerRadius - $skirt.hemAllowance);
 	};
 
+	let newSkirtName
+
+	let skirtindex = null
+
+
+	const save = ()=>{
+		skirtindex=null
+		saveSkirt(newSkirtName,$user,$skirt,_pieces)
+	}
+
+	const load = ()=>{
+		console.log("loading? ", skirtindex)
+		if(skirtindex)
+		_skirt = $skirtlist[skirtindex].data.skirt
+		_pieces =  $skirtlist[skirtindex].data._pieces
+		recalc()
+		newSkirtName = ""
+	}
+
+	console.log($skirtlist)
+
+
 	onMount(() => {
 		_pieces = $pieces;
 	});
+
 </script>
 
 <div class="container">
-	<h1>Skirt calculator</h1>
+	<!-- <h1>Skirt calculator</h1> -->
 
 	<div class="setup">
 		<div>
@@ -163,9 +187,36 @@
           Your pieces have an inner radius of {result.innerRadius} cm and an outer radius of {result.outerRadius}
           cm, including hem and seam allowances.
         </p>
+      </fieldset>
+		</div>
+		<div>
+      <fieldset class = radio_wrap>
+				<legend>Your saved skirts</legend>
+				<div class = number_input>
+          <label for="skirts">Load a skirt: </label>
+          <select
+            type="select"
+            id="skirts"
+            bind:value={skirtindex}
+						on:change={load}
+          >
+						<option value={null}></option>
+						{#each $skirtlist as {data},i}
+							<option value={i}>{data.skirtname}</option>
+						{/each}
+					</select>
+
+        </div>
+				<div class = number_input>
+          <label for="skirtname">New skirt name: </label>
+          <input
+            type="text"
+            id="skirtname"
+            bind:value={newSkirtName}
+          />
+        </div>
         <div>
-          <button>Save this skirt</button>
-          <!-- <input type=select/> -->
+          <button on:click={save}>Save this skirt</button>
         </div>
       </fieldset>
 		</div>
@@ -262,7 +313,7 @@
       display: flex;
       flex-direction: column;
 			margin: 5px;
-      input{
+      input,select{
         font-size: large;
         margin-left: 30px;
         width:60%;
