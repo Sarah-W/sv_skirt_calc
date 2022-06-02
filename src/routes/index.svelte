@@ -54,6 +54,8 @@
 	const newlayout = () => {
 		$skirt = _skirt;
 		_pieces = $pieces;
+		skirtindex="blank"
+		newSkirtName = ""
 	};
 
 	const enter = (e) => {
@@ -88,9 +90,9 @@
 
 	const load = ()=>{
 		console.log("loading? ", skirtindex)
-		if(skirtindex)
-		_skirt = $skirtlist[skirtindex].data.skirt
-		_pieces =  $skirtlist[skirtindex].data._pieces
+		if(skirtindex == "blank"){return}
+		_skirt = {...$skirtlist[skirtindex].data.skirt}
+		_pieces =  [...$skirtlist[skirtindex].data._pieces]
 		recalc()
 		newSkirtName = ""
 	}
@@ -200,8 +202,8 @@
             bind:value={skirtindex}
 						on:change={load}
           >
-						<option value={null}></option>
-						{#each $skirtlist as {data},i}
+						<option value={"blank"}></option>
+						{#each $skirtlist as {data,id},i (id)}
 							<option value={i}>{data.skirtname}</option>
 						{/each}
 					</select>
@@ -216,7 +218,7 @@
           />
         </div>
         <div>
-          <button on:click={save}>Save this skirt</button>
+          <button disabled = {!newSkirtName} on:click={save}>Save this skirt</button>
         </div>
       </fieldset>
 		</div>
