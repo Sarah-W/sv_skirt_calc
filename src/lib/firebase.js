@@ -29,14 +29,15 @@ import {
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
 const firebaseConfig = {
-  apiKey: "AIzaSyC1PW68JjOVDRffJLnZ4hJYzIxWqZOYelU",
-  authDomain: "skirtcalc.firebaseapp.com",
-  projectId: "skirtcalc",
-  storageBucket: "skirtcalc.appspot.com",
-  messagingSenderId: "869977279673",
-  appId: "1:869977279673:web:c8f4c81fffc92e7ab69f68",
-  measurementId: "G-LPK8JD10J8"
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_API_ID,
+  measurementId: import.meta.env.VITE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
@@ -85,7 +86,10 @@ async function saveSkirt(skirtname,user,skirt,_pieces){
   catch(error) {
     console.error('Error writing new message to Firebase Database', error);
   }
+}
 
+async function updateSkirt(skirt){
+  await setDoc(doc(collection(getFirestore(), 'skirts',skirt.id)),skirt.data)
 }
 
 
