@@ -6,7 +6,7 @@
 	import { types } from '$lib/skirt_types';
 	import Piece from '$lib/Piece.svelte';
 	import { newSkirt } from '$lib/skirtStore';
-	import {user,saveSkirt,skirtlist} from '$lib/firebase.js'
+	import {user,saveSkirt,skirtlist,updateSkirt,deleteSkirt} from '$lib/firebase.js'
 
 	let _skirt = {
 		type: 0,
@@ -78,33 +78,47 @@
 		result.outerRadius = Math.round($pieces[0].outerRadius - $skirt.hemAllowance);
 	};
 
-	let newSkirtName
-
-	let skirtindex = null
+	let newSkirtName =""
+	let skirtindex = "blank"
+	let skirtID = ""
 
 
 	const save = ()=>{
-		skirtindex=null
+		skirtindex= 0
 		saveSkirt(newSkirtName,$user,$skirt,_pieces)
+		makeNewSkirt=false
 	}
 
 	const load = ()=>{
 		console.log("loading? ", skirtindex)
 		if(skirtindex == "blank"){return}
+		skirtID=$skirtlist[skirtindex].id
+		console.log(skirtID)
 		_skirt = {...$skirtlist[skirtindex].data.skirt}
 		_pieces =  [...$skirtlist[skirtindex].data._pieces]
 		recalc()
 		newSkirtName = ""
 	}
 
-	console.log($skirtlist)
+	const update = ()=>{
+		updateSkirt($skirtlist[skirtindex],_skirt,_pieces)
+	}
 
+	const del = ()=>{
+		deleteSkirt(skirtID).then(load)
+	}
 
 	onMount(() => {
 		_pieces = $pieces;
 	});
 
+$:console.log($skirtlist[skirtindex]?.data)
+let makeNewSkirt = false
 </script>
+
+<!-- {#each $skirtlist as {id,data} }
+<button on:click={()=>deleteSkirt(id)}>{data.skirtname}</button>
+{/each} -->
 
 <div class="container">
 	<!-- <h1>Skirt calculator</h1> -->
@@ -194,7 +208,7 @@
 		<div>
       <fieldset class = radio_wrap>
 				<legend>Your saved skirts</legend>
-				<div class = number_input>
+				<div class = save_input style:display={makeNewSkirt?"none":null}>
           <label for="skirts">Load a skirt: </label>
           <select
             type="select"
@@ -207,9 +221,14 @@
 							<option value={i}>{data.skirtname}</option>
 						{/each}
 					</select>
-
         </div>
-				<div class = number_input>
+				<div style:display={makeNewSkirt?"none":null} class = buttonset>
+					<button disabled = {skirtindex=="blank"}  on:click={update}>Save</button>	
+					<button disabled = {skirtindex=="blank"} on:click={load}>Revert</button>
+					<button disabled = {skirtindex=="blank"}  on:click={del}>Delete</button>
+				</div>
+
+				<div class = save_input  style:display={makeNewSkirt?null:"none"} >
           <label for="skirtname">New skirt name: </label>
           <input
             type="text"
@@ -217,9 +236,16 @@
             bind:value={newSkirtName}
           />
         </div>
-        <div>
-          <button disabled = {!newSkirtName} on:click={save}>Save this skirt</button>
+
+        <div class = buttonset style:display={makeNewSkirt?null:"none"}>
+          <button disabled = {!newSkirtName} on:click={save}>Save</button>
+					<button on:click={()=>{makeNewSkirt=false}}>Cancel</button>
         </div>
+				<div class = buttonset>
+					<button disabled = {false} style:display={makeNewSkirt?"none":null} on:click={()=>{makeNewSkirt = true}}>New Skirt</button>
+				</div>
+	
+
       </fieldset>
 		</div>
 	</div>
@@ -295,6 +321,7 @@
       flex-direction: column;
 			margin: 5px;
     }
+
     fieldset{
       border-radius:4px;
       border-color: #ccc;
@@ -331,8 +358,38 @@
         font-size: small;
       }
     }  
-		}
+		.save_input{
+      display: flex;
+      flex-direction: column;
+      input,select{
+        font-size: large;
+        width:100%;
+        color:darkslategrey;
+        border-radius:4px;
+        border-color: #ccc;
+        border-width: thin;
+        border-style: solid;
+        padding:3px;
+      }
+      label{
+        margin-bottom: 3px;
+        font-size: small;
+      }
+    }  
+	}
 	
+	div.buttonset{
+		width:200px;
+		display:flex;
+		flex-direction: row;
+		margin:0;
+		padding:5px;
+		gap:5px;
+		justify-content: space-between;
+		button{
+			width:100%
+		}
+	}
 
 	.layout {
 		min-height: 50px;

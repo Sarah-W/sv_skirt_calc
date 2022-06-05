@@ -20,6 +20,7 @@ import {
   onSnapshot,
   setDoc,
   updateDoc,
+  deleteDoc,
   doc,
   serverTimestamp,
 } from 'firebase/firestore';
@@ -80,7 +81,8 @@ async function saveSkirt(skirtname,user,skirt,_pieces){
       skirtname:skirtname,
       skirt: skirt,
       _pieces:_pieces,
-      timestamp: serverTimestamp()
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     });
   }
   catch(error) {
@@ -88,10 +90,17 @@ async function saveSkirt(skirtname,user,skirt,_pieces){
   }
 }
 
-async function updateSkirt(skirt){
-  await setDoc(doc(collection(getFirestore(), 'skirts',skirt.id)),skirt.data)
+async function updateSkirt(oldskirt,skirt,_pieces){
+  let sk = {...oldskirt.data}
+  sk.skirt=skirt
+  sk._pieces = _pieces
+  await setDoc(doc(db,'skirts',oldskirt.id),{...sk,updatedAt: serverTimestamp()})
 }
 
+async function deleteSkirt(id){
+  await deleteDoc(doc(db, "skirts",id))
+  return "done"
+}
 
 const skirtlist = writable([])
 
@@ -100,8 +109,8 @@ function loadMessages(usr) {
   console.log(usr)
 
   if (usr){
-    const recentMessagesQuery = query(collection(getFirestore(), 'skirts'), where("user","==",usr.uid), orderBy('timestamp', 'desc'));
-
+   const recentMessagesQuery = query(collection(getFirestore(), 'skirts'), where("user","==",usr.uid), orderBy('createdAt', 'desc'));
+   
     // Start listening to the query.
     return onSnapshot(recentMessagesQuery, function(snapshot) {
       skirtlist.set(snapshot.docs.map(x=>({data:x.data(),id:x.id})))
@@ -112,4 +121,4 @@ function loadMessages(usr) {
 
 snapshotUnsubscribe = loadMessages()
 
-export {app,signIn,signUserOut,user,saveSkirt,skirtlist}
+export {app,signIn,signUserOut,user,saveSkirt,skirtlist,updateSkirt,deleteSkirt}
