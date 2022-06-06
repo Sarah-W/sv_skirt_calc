@@ -1,7 +1,5 @@
 <script>
 	import { onMount, tick } from 'svelte';
-
-	// import { format } from 'd3-format';
 	import { scaleLinear } from 'd3-scale';
 	import { types } from '$lib/skirt_types';
 	import Piece from '$lib/Piece.svelte';
@@ -54,7 +52,6 @@
 	const newlayout = () => {
 		$skirt = _skirt;
 		_pieces = $pieces;
-		skirtindex="blank"
 		newSkirtName = ""
 	};
 
@@ -125,7 +122,6 @@ let makeNewSkirt = false
 
 	<div class="setup">
 		<div>
-      
       <fieldset class = radio_wrap>
         <legend>Set pattern measurements </legend>
         <div class = number_input>
@@ -133,7 +129,6 @@ let makeNewSkirt = false
           <input
             type="number"
             id="waist"
-
             on:blur={recalc}
             on:keypress={enter}
             bind:value={_skirt.waistMeasurement}
@@ -221,11 +216,12 @@ let makeNewSkirt = false
 							<option value={i}>{data.skirtname}</option>
 						{/each}
 					</select>
-        </div>
-				<div style:display={makeNewSkirt?"none":null} class = buttonset>
-					<button disabled = {skirtindex=="blank"}  on:click={update}>Save</button>	
-					<button disabled = {skirtindex=="blank"} on:click={load}>Revert</button>
-					<button disabled = {skirtindex=="blank"}  on:click={del}>Delete</button>
+       
+					<div style:display={makeNewSkirt?"none":null} class = buttonset>
+						<button disabled = {skirtindex=="blank"}  on:click={update}>Save</button>	
+						<button disabled = {skirtindex=="blank"} on:click={load}>Revert</button>
+						<button disabled = {skirtindex=="blank"}  on:click={del}>Delete</button>
+					</div>
 				</div>
 
 				<div class = save_input  style:display={makeNewSkirt?null:"none"} >
@@ -235,16 +231,20 @@ let makeNewSkirt = false
             id="skirtname"
             bind:value={newSkirtName}
           />
-        </div>
+       
 
-        <div class = buttonset style:display={makeNewSkirt?null:"none"}>
-          <button disabled = {!newSkirtName} on:click={save}>Save</button>
-					<button on:click={()=>{makeNewSkirt=false}}>Cancel</button>
-        </div>
-				<div class = buttonset>
-					<button disabled = {false} style:display={makeNewSkirt?"none":null} on:click={()=>{makeNewSkirt = true}}>New Skirt</button>
+					<div class = buttonset style:display={makeNewSkirt?null:"none"}>
+						<button disabled = {!newSkirtName} on:click={save}>Save</button>
+						<button on:click={()=>{makeNewSkirt=false}}>Cancel</button>
+					</div>
 				</div>
-	
+
+				<div class=save_input style:display={makeNewSkirt?"none":null} >
+					<label for="newskirt">Or save as a new skirt </label>
+					<div id=newskirt class = buttonset>	
+						<button  disabled = {false} on:click={()=>{makeNewSkirt = true}}>Save as</button>
+					</div>
+				</div>
 
       </fieldset>
 		</div>
@@ -353,11 +353,9 @@ let makeNewSkirt = false
         border-style: solid;
         padding:3px;
       }
-      label{
-        margin-bottom: 3px;
-        font-size: small;
-      }
-    }  
+
+    } 
+
 		.save_input{
       display: flex;
       flex-direction: column;
@@ -369,7 +367,8 @@ let makeNewSkirt = false
         border-color: #ccc;
         border-width: thin;
         border-style: solid;
-        padding:3px;
+        padding:3px 0px 3px 0px;
+				margin-bottom: 3px;
       }
       label{
         margin-bottom: 3px;
@@ -377,13 +376,17 @@ let makeNewSkirt = false
       }
     }  
 	}
-	
+	label{
+        margin-bottom: 3px;
+        font-size: small;
+      }
+
 	div.buttonset{
-		width:200px;
+		width:100%;
 		display:flex;
 		flex-direction: row;
-		margin:0;
-		padding:5px;
+		margin:0px;
+		padding:5px 0px;
 		gap:5px;
 		justify-content: space-between;
 		button{

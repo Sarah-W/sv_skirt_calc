@@ -1,4 +1,4 @@
-import { readable, writable, derived } from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 import { types } from '$lib/skirt_types';
 import { scaleLinear } from 'd3-scale';
 
