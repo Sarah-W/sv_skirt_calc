@@ -1,5 +1,6 @@
 <script>
 import {signIn,signUserOut,user} from "$lib/firebase.js"
+let newuser = false
 </script>
 
 <nav>
@@ -13,7 +14,10 @@ import {signIn,signUserOut,user} from "$lib/firebase.js"
         <div id ="usrpic" style:background-image={`url(${$user.photoURL})`}></div>
           <button on:click={signUserOut}>Log out</button>
         {:else}
-          <button on:click={signIn}>Log in</button>
+          <div>
+            <button on:click={signIn.google}>Log in with Google</button>
+            <button on:click={()=>newuser = true}>Sign up</button>
+          </div>
         {/if}
       </div>
     </div>
