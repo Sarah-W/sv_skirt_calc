@@ -6,7 +6,8 @@ import {
   getAuth,
   onAuthStateChanged,
   GoogleAuthProvider,
-  createUserWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,  
   signInWithPopup,
   signOut
     } from "firebase/auth";
@@ -77,13 +78,29 @@ signIn.newUser = async (email,password)=>{
     .then((userCredential) => {
       // Signed in 
       const user = userCredential.user;
+      console.log(user)
       // ...
     })
     .catch((error) => {
+      console.log(error)
       const errorCode = error.code;
       const errorMessage = error.message;
       // ..
     });
+}
+
+signIn.email = async(email,password)=>{
+  const auth = getAuth();
+  signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
 }
 
 function signUserOut() {

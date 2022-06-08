@@ -109,7 +109,30 @@
 		_pieces = $pieces;
 	});
 
-$:console.log($skirtlist[skirtindex]?.data)
+
+$: if(!$user){
+
+	_skirt = {
+		type: 0,
+		waistMeasurement: 80,
+		skirtLength: 50,
+		seamAllowance: 1.5,
+		hemAllowance: 1.5,
+		fabricWidth: 112
+	};
+	skirtindex="blank"
+	// _pieces=[]
+	recalc()
+}
+
+
+
+
+// const changeuser = (u)=> {
+// 	console.log("changing user",u)
+// 	newlayout()
+// }
+
 let makeNewSkirt = false
 </script>
 
