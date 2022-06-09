@@ -7,6 +7,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail, 
   signInWithEmailAndPassword,  
   signInWithPopup,
   signOut
@@ -101,6 +102,20 @@ signIn.email = async(email,password)=>{
     const errorCode = error.code;
     const errorMessage = error.message;
   });
+}
+
+signIn.forgotPasswordEmail = async(email)=>{
+  const auth = getAuth();
+  sendPasswordResetEmail(auth, email)
+  .then(() => {
+    // Password reset email sent!
+    // ..
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // ..
+  })
 }
 
 function signUserOut() {

@@ -43,9 +43,20 @@
 		let deltas = _pieces.map((piece) => ({
 			dx: piece.dx,
 			dy: piece.dy,
-			pieceRotation: piece.pieceRotation
+			pieceRotation: piece.pieceRotation ? piece.pieceRotation:0
 		}));
 		_pieces = $pieces.map((piece, i) => ({ ...piece, ...deltas[i] }));
+		measure();
+	};
+
+	const reset = () => {
+		$skirt = _skirt;
+		let offsets ={
+			dx: 0,
+			dy: 0,
+			pieceRotation: 0
+		}
+		_pieces = $pieces.map((piece, i) => ({ ...piece, ...offsets }));
 		measure();
 	};
 
@@ -105,13 +116,15 @@
 		deleteSkirt(skirtID).then(load)
 	}
 
+	let mounted = false
 	onMount(() => {
 		_pieces = $pieces;
+		mounted=true
 	});
 
 
-$: if(!$user){
-
+$: if(mounted && !$user){
+   console.log("looping?")
 	_skirt = {
 		type: 0,
 		waistMeasurement: 80,
@@ -121,8 +134,7 @@ $: if(!$user){
 		fabricWidth: 112
 	};
 	skirtindex="blank"
-	// _pieces=[]
-	recalc()
+	reset()
 }
 
 

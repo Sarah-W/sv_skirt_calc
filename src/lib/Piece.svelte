@@ -15,13 +15,14 @@
 
 	const dispatch = createEventDispatcher();
 	
-	let path = (pieceRotation) =>
-		arc()({
+	let path = (pieceRotation) =>{
+		return arc()({
 			innerRadius,
 			outerRadius,
 			startAngle: startAngle + pieceRotation,
 			endAngle: endAngle + pieceRotation
 		});
+	}
 
 	const centroid = () =>
 		arc().centroid({
