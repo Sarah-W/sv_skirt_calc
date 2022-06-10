@@ -43,9 +43,20 @@
 		let deltas = _pieces.map((piece) => ({
 			dx: piece.dx,
 			dy: piece.dy,
-			pieceRotation: piece.pieceRotation
+			pieceRotation: piece.pieceRotation ? piece.pieceRotation:0
 		}));
 		_pieces = $pieces.map((piece, i) => ({ ...piece, ...deltas[i] }));
+		measure();
+	};
+
+	const reset = () => {
+		$skirt = _skirt;
+		let offsets ={
+			dx: 0,
+			dy: 0,
+			pieceRotation: 0
+		}
+		_pieces = $pieces.map((piece, i) => ({ ...piece, ...offsets }));
 		measure();
 	};
 
@@ -105,11 +116,35 @@
 		deleteSkirt(skirtID).then(load)
 	}
 
+	let mounted = false
 	onMount(() => {
 		_pieces = $pieces;
+		mounted=true
 	});
 
-$:console.log($skirtlist[skirtindex]?.data)
+
+$: if(mounted && !$user){
+   console.log("looping?")
+	_skirt = {
+		type: 0,
+		waistMeasurement: 80,
+		skirtLength: 50,
+		seamAllowance: 1.5,
+		hemAllowance: 1.5,
+		fabricWidth: 112
+	};
+	skirtindex="blank"
+	reset()
+}
+
+
+
+
+// const changeuser = (u)=> {
+// 	console.log("changing user",u)
+// 	newlayout()
+// }
+
 let makeNewSkirt = false
 </script>
 
@@ -297,6 +332,9 @@ let makeNewSkirt = false
 				{/each}
 			</g>
 		</svg>
+	</div>
+	<div>
+		<p>Skirtcalc is in beta. Please report any bugs or other issues to <a target="_blank" href="https://github.com/Sarah-W/sv_skirt_calc/issues/new">github.com/Sarah-W/sv_skirt_calc/issues</a> </p>
 	</div>
 </div>
 

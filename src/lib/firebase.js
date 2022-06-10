@@ -6,6 +6,9 @@ import {
   getAuth,
   onAuthStateChanged,
   GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail, 
+  signInWithEmailAndPassword,  
   signInWithPopup,
   signOut
     } from "firebase/auth";
@@ -61,10 +64,58 @@ const firebaseConfig = {
 
   onAuthStateChanged(getAuth(), authStateObserver)
 
-async function signIn() {
+
+let signIn={}
+
+signIn.google = async()=> {
   // Sign in Firebase using popup auth and Google as the identity provider.
   var provider = new GoogleAuthProvider();
   await signInWithPopup(getAuth(), provider);
+}
+
+signIn.newUser = async (email,password)=>{
+  const auth = getAuth();
+  createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      console.log(user)
+      // ...
+    })
+    .catch((error) => {
+      console.log(error)
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // ..
+    });
+}
+
+signIn.email = async(email,password)=>{
+  const auth = getAuth();
+  signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
+}
+
+signIn.forgotPasswordEmail = async(email)=>{
+  const auth = getAuth();
+  sendPasswordResetEmail(auth, email)
+  .then(() => {
+    // Password reset email sent!
+    // ..
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // ..
+  })
 }
 
 function signUserOut() {

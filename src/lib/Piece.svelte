@@ -6,22 +6,23 @@
 	export let dx = 0;
 	export let dy = 0;
 	export let pieceRotation = 0;
-	export let seamAllowance = 0;
-	export let hemAllowance = 0;
+	export let seamAllowance = 1;
+	export let hemAllowance = 1;
 	export let startAngle = 0;
-	export let endAngle = 0;
+	export let endAngle = 1;
 	export let innerRadius = 0;
-	export let outerRadius = 0;
+	export let outerRadius = 1;
 
 	const dispatch = createEventDispatcher();
-
-	let path = (pieceRotation) =>
-		arc()({
+	
+	let path = (pieceRotation) =>{
+		return arc()({
 			innerRadius,
 			outerRadius,
 			startAngle: startAngle + pieceRotation,
 			endAngle: endAngle + pieceRotation
 		});
+	}
 
 	const centroid = () =>
 		arc().centroid({

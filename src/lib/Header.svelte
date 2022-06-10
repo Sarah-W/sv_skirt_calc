@@ -1,26 +1,21 @@
 <script>
-import {signIn,signUserOut,user} from "$lib/firebase.js"
+  import User from './User.svelte';
 </script>
 
 <nav>
   <div class = container>
-    <div id = start><h1>Skirt Calculator</h1></div>
+    <div id = start>
+      <h1 style="margin-bottom:0px">Skirt Calculator</h1>
+      <p style="margin-top:0px">Calculates a curtting layout for a circle skirt.</p>
+    </div>
     <div id = middle></div>
     <div id = end >
-      <div id = user >
-        {#if $user}
-        {$user.displayName} 
-        <div id ="usrpic" style:background-image={`url(${$user.photoURL})`}></div>
-          <button on:click={signUserOut}>Log out</button>
-        {:else}
-          <button on:click={signIn}>Log in</button>
-        {/if}
-      </div>
+      <User></User>
     </div>
   </div>
 </nav>
 
-<style>
+<style lang="scss">
   .container {
     display: flex;
     justify-content: space-between;
@@ -32,18 +27,4 @@ import {signIn,signUserOut,user} from "$lib/firebase.js"
     border: solid thin grey;
 
   }
-  #user{
-    display: flex;
-    align-items: center;
-  }
-  #usrpic{
-    height:40px;
-    width:40px;
-    border-radius: 40px;
-    margin:10px;
-    background-position: center;
-    background-size: cover;
-    background-color: grey;
-  }
-
 </style>
