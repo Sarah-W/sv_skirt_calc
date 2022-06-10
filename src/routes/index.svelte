@@ -333,6 +333,9 @@ let makeNewSkirt = false
 			</g>
 		</svg>
 	</div>
+	<div>
+		<p>Skirtcalc is in beta. Please report any bugs or other issues to <a href="https://github.com/Sarah-W/sv_skirt_calc/issues">github.com/Sarah-W/sv_skirt_calc/issues</a> </p>
+	</div>
 </div>
 
 <style lang="scss">

@@ -4,7 +4,10 @@
 
 <nav>
   <div class = container>
-    <div id = start><h1>Skirt Calculator</h1></div>
+    <div id = start>
+      <h1 style="margin-bottom:0px">Skirt Calculator</h1>
+      <p style="margin-top:0px">Calculates a curtting layout for a circle skirt.</p>
+    </div>
     <div id = middle></div>
     <div id = end >
       <User></User>
